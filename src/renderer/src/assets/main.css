@@ -27,3 +27,149 @@
 .container {
   padding: 20px;
 }
+Src - main - index.js
+async function getAllDataFromDB() {
+  const client = global.dbclient
+ 
+  const [expeceProduct, familyJob, productCategory, productImport] = await Promise.all([
+    client.query('SELECT * FROM expece_product'),
+    client.query('SELECT * FROM family_job'),
+    client.query('SELECT * FROM product_category'),
+    client.query('SELECT * FROM product_category'),
+  ]);
+  console.log(productImport.rows)
+  return{
+    expeceProduct: expeceProduct.rows,
+    familyJob: familyJob.rows,
+    productCategory: productCategory.rows,
+    productImport: productImport.rows
+  }
+ ipcMain.handle('getAllData', getAllDataFromDB)
+ 
+client.query('SELECT name, job_now, organization,(EXTRACT 
+(YEAR FROM AGE(current_date, data_start)) * 12 + EXTRACT
+(MONTH FROM AGE(current_date, data_start))) * oclad AS
+total_salary, EXTRACT(YEAR FROM AGE(current_date, birthday)
+):: int AS age FROM family_job')
+ 
+ 
+Src - preload - index.js
+getAllData: () => ipcRenderer.invoke('getAllData’)
+ 
+Renderer - src - App.js
+function App() {
+  const [data, setData] = useState({
+    expeceProduct: [],
+    familyJob: [],
+    productCategory: [],
+    productImport: []
+  });
+  const fetchData = async () => {
+    const result = await window.api.getAllData();
+    console.log(result)
+    setData(result);
+  };
+  useEffect(() => {
+    fetchData();
+  }, [])
+ 
+  return (
+<>
+     <div className="page-heading">
+       <img className="page-logo" src={logo} alt="" />
+       <h1>Партнеры</h1>
+     </div>
+     <div className="box">
+       {data.familyJob.map((f) => (
+         <div key={f.id}>
+           <div className="minibox">
+             <div>{f.name}</div>
+             <div>{f.age}</div>
+             <div>{f.job_now != null ? f.job_now : "Безработный"}</div>
+             <div>{f.organization != null ? f.organization : "-"}</div>
+             <div>{f.total_salary != null ? f.total_salary : 0}</div>
+           </div>
+         </div>
+       ))}
+     </div>
+   </>   
+  );
+}
+export default App;
+ 
+#root {
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ justify-content: center;
+ font-family: 'Segoe UI';
+ font-size: 18px;
+}
+ 
+.box{
+ border: 1px solid black;
+ width: 50%;
+ margin-left: auto;
+ margin-right: auto;
+}
+.minibox{
+ border: 1px solid black;
+ margin: 20px;
+}
+.minibox:hover {
+ background-color: #67BA80;
+ cursor: pointer;
+ 
+}
+.page-heading {
+ display: flex;
+ flex-direction: row;
+ width: 700px;
+ gap: 50px;
+}
+.page-logo {
+ width: 120px;
+}
+ 
+ 
+ 
+Текст
+
+text/varchar
+
+Целые числа
+
+integer
+
+Дата/время
+
+ 
+
+DATE(SET datestyle = "ISO, MDY";), DATETIME, TIMESTAMP
+
+Числа с фиксированной точкой
+
+ 
+
+DECIMAL(M,D) и NUMERIC(M,D)
+
+ 
+CREATE TABLE table_name (id SERIAL PRIMARY KEY, …)
+ 
+INSERT into table_name [(column1, [, column2] ...)] values (values_list);
+ 
+FOREIGN KEY (CustomerId)  REFERENCES Customers (Id);
+ 
+ALTER TABLE books ADD author NVARCHAR(50) NOT NULL(добавление столбца);
+ 
+ALTER TABLE old_table_name RENAME TO new_table_name;(переименовать таблицу)
+ 
+TRUNCATE TABLE Clients;(удаление данных из таблицы)
+​
+DROP TABLE Clients;(удаление самой таблицы)
+ 
+ALTER TABLE cars RENAME COLUMN quantity TO amount;(переименовать столбец)
+ 
+DELETE FROM orders WHERE customer_name = 'Иванов Иван';
+ 
+ 
